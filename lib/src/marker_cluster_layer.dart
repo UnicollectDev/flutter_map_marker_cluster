@@ -304,7 +304,7 @@ class _MarkerClusterLayerState extends State<MarkerClusterLayer>
         child: ClusterWidget(
           cluster: markerNode.parent!,
           builder: widget.options.builder,
-          onTap: _onClusterTap(markerNode.parent!),
+          onTap: () => _onClusterTap(markerNode.parent!),
         ),
       ),
     );
@@ -327,7 +327,7 @@ class _MarkerClusterLayerState extends State<MarkerClusterLayer>
           child: ClusterWidget(
             cluster: clusterNode,
             builder: widget.options.builder,
-            onTap: _onClusterTap(clusterNode),
+            onTap: () => _onClusterTap(clusterNode),
           ),
         ),
       );
@@ -346,7 +346,7 @@ class _MarkerClusterLayerState extends State<MarkerClusterLayer>
         child: ClusterWidget(
           cluster: clusterNode,
           builder: widget.options.builder,
-          onTap: _onClusterTap(clusterNode),
+          onTap: () => _onClusterTap(clusterNode),
         ),
       ),
     );
@@ -384,7 +384,7 @@ class _MarkerClusterLayerState extends State<MarkerClusterLayer>
             child: ClusterWidget(
               cluster: child,
               builder: widget.options.builder,
-              onTap: _onClusterTap(child),
+              onTap: () => _onClusterTap(child),
             ),
           ),
         );
@@ -412,7 +412,7 @@ class _MarkerClusterLayerState extends State<MarkerClusterLayer>
       child: ClusterWidget(
         cluster: clusterNode,
         builder: widget.options.builder,
-        onTap: _onClusterTap(clusterNode),
+        onTap: () => _onClusterTap(clusterNode),
       ),
     ));
     //parent
@@ -424,7 +424,7 @@ class _MarkerClusterLayerState extends State<MarkerClusterLayer>
       child: ClusterWidget(
         cluster: clusterNode.parent!,
         builder: widget.options.builder,
-        onTap: _onClusterTap(clusterNode.parent!),
+        onTap: () => _onClusterTap(clusterNode.parent!),
       ),
     ));
   }
@@ -443,7 +443,7 @@ class _MarkerClusterLayerState extends State<MarkerClusterLayer>
         child: ClusterWidget(
           cluster: cluster,
           builder: widget.options.builder,
-          onTap: _onClusterTap(cluster),
+          onTap: () => _onClusterTap(cluster),
         ),
       ),
     );
@@ -542,95 +542,95 @@ class _MarkerClusterLayerState extends State<MarkerClusterLayer>
     return layers;
   }
 
-  VoidCallback _onClusterTap(MarkerClusterNode cluster) {
-    return () async {
-      if (_animating) return;
+  void _onClusterTap(MarkerClusterNode cluster) {
+    // return () async {
+    //   if (_animating) return;
 
-      widget.options.onClusterTap?.call(cluster);
+    //   widget.options.onClusterTap?.call(cluster);
 
-      if (!widget.options.zoomToBoundsOnClick) {
-        if (widget.options.spiderfyCluster) {
-          if (_clusterManager.spiderfyCluster != null) {
-            if (_clusterManager.spiderfyCluster == cluster) {
-              _unspiderfy();
-              return;
-            } else {
-              await _unspiderfy();
-            }
-          }
-          _spiderfy(cluster);
-        }
-        return;
-      }
+    //   if (!widget.options.zoomToBoundsOnClick) {
+    //     if (widget.options.spiderfyCluster) {
+    //       if (_clusterManager.spiderfyCluster != null) {
+    //         if (_clusterManager.spiderfyCluster == cluster) {
+    //           _unspiderfy();
+    //           return;
+    //         } else {
+    //           await _unspiderfy();
+    //         }
+    //       }
+    //       _spiderfy(cluster);
+    //     }
+    //     return;
+    //   }
 
-      final center = widget.mapCamera.center;
-      // CenterZoom dest = widget.mapController.centerZoomFitBounds(
-      //   cluster.bounds,
-      //   options: widget.options.fitBoundsOptions,
-      // );
-      final opt = widget.options;
-      MapCamera dest = CameraFit.bounds(
-        bounds: cluster.bounds,
-        padding: opt.padding,
-        maxZoom: opt.maxZoom,
-        forceIntegerZoomLevel: opt.forceIntegerZoomLevel,
-      ).fit(widget.mapCamera);
+    //   final center = widget.mapCamera.center;
+    //   // CenterZoom dest = widget.mapController.centerZoomFitBounds(
+    //   //   cluster.bounds,
+    //   //   options: widget.options.fitBoundsOptions,
+    //   // );
+    //   final opt = widget.options;
+    //   MapCamera dest = CameraFit.bounds(
+    //     bounds: cluster.bounds,
+    //     padding: opt.padding,
+    //     maxZoom: opt.maxZoom,
+    //     forceIntegerZoomLevel: opt.forceIntegerZoomLevel,
+    //   ).fit(widget.mapCamera);
 
-      // check if children can un-cluster
-      final cannotDivide = cluster.markers.every((marker) =>
-              marker.parent!.zoom == _maxZoom &&
-              marker.parent == cluster.markers.first.parent) ||
-          (dest.zoom == _currentZoom && _currentZoom == opt.maxZoom);
+    //   // check if children can un-cluster
+    //   final cannotDivide = cluster.markers.every((marker) =>
+    //           marker.parent!.zoom == _maxZoom &&
+    //           marker.parent == cluster.markers.first.parent) ||
+    //       (dest.zoom == _currentZoom && _currentZoom == opt.maxZoom);
 
-      if (cannotDivide) {
-        //dest = CenterZoom(center: dest.center, zoom: _currentZoom.toDouble());
-        dest = MapCamera(
-            crs: dest.crs,
-            center: dest.center,
-            zoom: _currentZoom.toDouble(),
-            rotation: dest.rotation,
-            nonRotatedSize: dest.nonRotatedSize);
+    //   if (cannotDivide) {
+    //     //dest = CenterZoom(center: dest.center, zoom: _currentZoom.toDouble());
+    //     dest = MapCamera(
+    //         crs: dest.crs,
+    //         center: dest.center,
+    //         zoom: _currentZoom.toDouble(),
+    //         rotation: dest.rotation,
+    //         nonRotatedSize: dest.nonRotatedSize);
 
-        if (_clusterManager.spiderfyCluster != null) {
-          if (_clusterManager.spiderfyCluster == cluster) {
-            _unspiderfy();
-            return;
-          } else {
-            await _unspiderfy();
-          }
-        }
-      }
+    //     if (_clusterManager.spiderfyCluster != null) {
+    //       if (_clusterManager.spiderfyCluster == cluster) {
+    //         _unspiderfy();
+    //         return;
+    //       } else {
+    //         await _unspiderfy();
+    //       }
+    //     }
+    //   }
 
-      if (dest.zoom > _currentZoom && !cannotDivide) {
-        _showPolygon(cluster.markers.map((m) => m.point).toList());
-      }
+    //   if (dest.zoom > _currentZoom && !cannotDivide) {
+    //     _showPolygon(cluster.markers.map((m) => m.point).toList());
+    //   }
 
-      final latTween =
-          Tween<double>(begin: center.latitude, end: dest.center.latitude);
-      final lonTween =
-          Tween<double>(begin: center.longitude, end: dest.center.longitude);
-      final zoomTween =
-          Tween<double>(begin: widget.mapCamera.zoom, end: dest.zoom);
+    //   final latTween =
+    //       Tween<double>(begin: center.latitude, end: dest.center.latitude);
+    //   final lonTween =
+    //       Tween<double>(begin: center.longitude, end: dest.center.longitude);
+    //   final zoomTween =
+    //       Tween<double>(begin: widget.mapCamera.zoom, end: dest.zoom);
 
-      final animation = CurvedAnimation(
-          parent: _fitBoundController,
-          curve: widget.options.animationsOptions.fitBoundCurves);
+    //   final animation = CurvedAnimation(
+    //       parent: _fitBoundController,
+    //       curve: widget.options.animationsOptions.fitBoundCurves);
 
-      final listener = _centerMarkerListener(animation, latTween, lonTween,
-          zoomTween: zoomTween);
+    //   final listener = _centerMarkerListener(animation, latTween, lonTween,
+    //       zoomTween: zoomTween);
 
-      _fitBoundController.addListener(listener);
+    //   _fitBoundController.addListener(listener);
 
-      _fitBoundController.forward().then((_) {
-        _fitBoundController
-          ..removeListener(listener)
-          ..reset();
+    //   _fitBoundController.forward().then((_) {
+    //     _fitBoundController
+    //       ..removeListener(listener)
+    //       ..reset();
 
-        if (cannotDivide && widget.options.spiderfyCluster) {
-          _spiderfy(cluster);
-        }
-      });
-    };
+    //     if (cannotDivide && widget.options.spiderfyCluster) {
+    //       _spiderfy(cluster);
+    //     }
+    //   });
+    // };
   }
 
   VoidCallback _onMarkerTap(MarkerNode marker) {
