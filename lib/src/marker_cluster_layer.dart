@@ -150,10 +150,25 @@ class _MarkerClusterLayerState extends State<MarkerClusterLayer>
 
   @override
   Widget build(BuildContext context) {
-    return MobileLayerTransformer(
-      child: Stack(
-        children: _buildLayers(),
-      ),
+    final popupOptions = widget.options.popupOptions;
+    return Stack(
+      children: [
+        // Keep the layers in a MobileTransformStack
+        MobileLayerTransformer(
+          child: Stack(
+            children: _buildMobileTransformStack(),
+          ),
+        ),
+        // Move the PopupLayer outside the MobileLayerTransformer since it has its own
+        if (popupOptions != null)
+          PopupLayer(
+            popupDisplayOptions: PopupDisplayOptions(
+              builder: popupOptions.popupBuilder,
+              animation: popupOptions.popupAnimation,
+              snap: popupOptions.popupSnap,
+            ),
+          )
+      ],
     );
   }
 
@@ -474,10 +489,9 @@ class _MarkerClusterLayerState extends State<MarkerClusterLayer>
     return results;
   }
 
-  List<Widget> _buildLayers() {
+  List<Widget> _buildMobileTransformStack() {
     if (widget.mapCamera.zoom != _previousZoomDouble) {
       _previousZoomDouble = widget.mapCamera.zoom;
-      _unspiderfy();
     }
 
     final zoom = widget.mapCamera.zoom.ceil();
@@ -535,9 +549,10 @@ class _MarkerClusterLayerState extends State<MarkerClusterLayer>
     if (popupOptions != null) {
       layers.add(PopupLayer(
         popupDisplayOptions: PopupDisplayOptions(
-            builder: popupOptions.popupBuilder,
-            animation: popupOptions.popupAnimation,
-            snap: popupOptions.popupSnap),
+          builder: popupOptions.popupBuilder,
+          animation: popupOptions.popupAnimation,
+          snap: popupOptions.popupSnap,
+        ),
       ));
     }
 
