@@ -545,17 +545,6 @@ class _MarkerClusterLayerState extends State<MarkerClusterLayer>
       }
     });
 
-    final popupOptions = widget.options.popupOptions;
-    if (popupOptions != null) {
-      layers.add(PopupLayer(
-        popupDisplayOptions: PopupDisplayOptions(
-          builder: popupOptions.popupBuilder,
-          animation: popupOptions.popupAnimation,
-          snap: popupOptions.popupSnap,
-        ),
-      ));
-    }
-
     return layers;
   }
 
